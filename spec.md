@@ -41,32 +41,38 @@ and their atoms are the same in the sense of *same?*, and `#f` otherwise.
 
 ## Tree walkers
 
-The following procedures walk the nodes of a tree in any of a variety of orders,
-applying a procedure to each node.  The procedure accepts three arguments: the
-node itself, its depth, and its local position.  It is up to the procedure to
-filter out atoms or subtrees if it chooses to do so.
+The following procedures walk the nodes of the *tree*
+argument in any of a variety of orders.  The *proc*
+argument is invoked at each node with three arguments:
+the node itself, its depth, and its local position.
+If it returns a true value, the chiildren of the node
+are walked; otherwise, they are not.
 
-`(tree-walk-preorder `*proc tree*`)`
+The `walk` procedures return an unspecified value.
+The `make`...`generator` procedures return
+a SRFI 158 generator of the nodes walked.
 
-Accesses the nodes of *tree* in depth-first preorder and applies
-*proc* to each in turn.  That is, each node is walked and then all of its children are
-recursively walked.  Returns an unspecified value.
+`(tree-walk-preorder `*proc tree*`)`  
+`(make-tree-preorder-generator `*proc tree*`)`
 
-`(tree-walk-postorder `*proc tree*`)`
+Accesses the nodes of *tree* in depth-first preorder.
+That is, each node is walked before its children in left-to-right order are walked.
 
-Accesses the nodes of *tree* in depth-first postorder and applies
-*proc* to each in turn.  That is, all the children of each node are
-recursively walked and then the node itself is walked.
-Returns an unspecified value.
+`(tree-walk-postorder `*proc tree*`)`  
+`(make-tree-postorder-generator `*proc tree*`)`
 
-`(tree-walk-breadth-first `*proc tree*`)`
+Accesses the nodes of *tree* in depth-first postorder.
+That is, each node is walked before its children in left-to-right order are walked.
+
+`(tree-walk-breadth-first `*proc tree*`)`  
+`(make-tree-breadth-first-generator `*proc tree*`)`
 
 Accesses the nodes of *tree* in breadth-first preorder and applies
-*proc* to each in turn. That is, *proc* is invoked on *tree*,
-then on all children of *tree*
-in left-to-right order, then on all grandchildren of *tree*
+*proc* to each in turn. That is, first *tree*,
+then all children of *tree*
+in left-to-right order, then all grandchildren of *tree*
 in left-to-right order, and so on.
-Returns an unspecified value.
+The values returned by *proc* are ignored and all nodes are walked.
 
 ## Tree operations
 
@@ -204,16 +210,6 @@ It is an error if *subtree* and *newparent* are not descendants of the tree.
 This procedure is in effect a composition of `tree-add` and `tree-prune`,
 but may be implemented more efficiently because it only has to reconstruct
 the tree once, not twice.
-
-## Output
-
-`(tree-display-atoms `*tree* *separator* [ *port*) ]`)`
-
-Walks through the atoms of *tree* in breadth-first order 
-and displays them (as if using `display`) on *port*, 
-which defaults to the value of `(current-output-port)`.
-The string *separator* is displayed between each consecutive
-pair of atoms.
 
 ## Implementation
 
